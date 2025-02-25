@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerminalGenius Packaging and Deployment Guide</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #475569;
+            --background: #f8fafc;
+            --paper: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --code-bg: #f1f5f9;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--background);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+            color: var(--primary);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        p, ul, ol {
+            margin-bottom: 1.5rem;
+        }
+
+        ul, ol {
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+        }
+
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.9rem;
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+
+        pre code {
+            padding: 0;
+            background-color: transparent;
+        }
+
+        .copy-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: right;
+            margin-top: -0.5rem;
+            transition: background-color 0.2s;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .card {
+            background-color: var(--paper);
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .section-icon {
+            display: inline-block;
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .note {
+            background-color: #e0f2fe;
+            border-left: 4px solid #0ea5e9;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.25rem;
+        }
+
+        .command-name {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .tab-container {
+            margin: 2rem 0;
+        }
+
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .tab-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>TerminalGenius</h1>
+            <p>Packaging and Deployment Guide</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="openTab(event, 'debian')">Debian Package</button>
+                <button class="tab-button" onclick="openTab(event, 'docker')">Docker Deployment</button>
+                <button class="tab-button" onclick="openTab(event, 'config')">Advanced Configuration</button>
+                <button class="tab-button" onclick="openTab(event, 'troubleshooting')">Troubleshooting</button>
+            </div>
+
+            <div id="debian" class="tab-content active">
+                <div class="card">
+                    <h2><span class="section-icon">📦</span> Debian Package Installation</h2>
+                    <p>The Debian package provides the easiest installation method for Ubuntu and Debian-based systems. It automatically:</p>
+                    <ul>
+                        <li>Installs all dependencies</li>
+                        <li>Creates a system-wide <code>tg</code> command</li>
+                        <li>Sets up configuration files</li>
+                        <li>Creates user directories</li>
+                    </ul>
+
+                    <h3>Building the Debian Package</h3>
+                    <ol>
+                        <li>Place all required files in the same directory:
+                            <ul>
+                                <li><code>terminalgenius.py</code> (main application file)</li>
+                                <li><code>build_deb.sh</code> (packaging script)</li>
+                                <li><code>README.md</code> (documentation)</li>
+                            </ul>
+                        </li>
+                        <li>Make the build script executable:
+                            <pre><code>chmod +x build_deb.sh</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                        </li>
+                        <li>Run the build script:
+                            <pre><code>./build_deb.sh</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                        </li>
+                        <li>This will create a file named <code>terminalgenius_1.0.0.deb</code></li>
+                    </ol>
+
+                    <h3>Installing the Debian Package</h3>
+                    <p>To install the package:</p>
+                    <pre><code>sudo dpkg -i terminalgenius_1.0.0.deb
+sudo apt-get install -f # Installs any missing dependencies</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                    <p>Once installed, you can run TerminalGenius from anywhere using the <code>tg</code> command:</p>
+                    <pre><code>tg ask "How do I use Docker?"
+tg find "python file"
+tg so "python asyncio error handling"</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                    <h3>Uninstalling</h3>
+                    <p>To remove the package:</p>
+                    <pre><code>sudo apt-get remove terminalgenius</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+            </div>
+
+            <div id="docker" class="tab-content">
+                <div class="card">
+                    <h2><span class="section-icon">🐳</span> Docker Deployment</h2>
+                    <p>Docker provides an isolated, consistent environment for running TerminalGenius, which is useful for:</p>
+                    <ul>
+                        <li>Testing the application without installing it on your system</li>
+                        <li>Deploying in cloud environments</li>
+                        <li>Ensuring consistent behavior across different platforms</li>
+                    </ul>
+
+                    <h3>Building the Docker Image</h3>
+                    <ol>
+                        <li>Place all required files in the same directory:
+                            <ul>
+                                <li><code>terminalgenius.py</code> (main application file)</li>
+                                <li><code>Dockerfile</code></li>
+                                <li><code>docker-entrypoint.sh</code></li>
+                                <li><code>requirements.txt</code></li>
+                                <li><code>docker-compose.yml</code> (optional)</li>
+                            </ul>
+                        </li>
+                        <li>Build the Docker image:
+                            <pre><code>docker build -t terminalgenius .</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                        </li>
+                    </ol>
+
+                    <h3>Running with Docker</h3>
+                    <p>You can run TerminalGenius directly with Docker:</p>
+                    <pre><code>docker run -it --rm \
+-e GEMINI_API_KEY=your_api_key_here \
+-v "$(pwd)/config:/app/config" \
+-v "$(pwd)/logs:/app/logs" \
+terminalgenius ask "How do I create a bash script?"</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                    <h3>Using Docker Compose</h3>
+                    <p>For convenience, you can use Docker Compose:</p>
+                    <ol>
+                        <li>Create a <code>.env</code> file with your API key:
+                            <pre><code>GEMINI_API_KEY=your_api_key_here</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                        </li>
+                        <li>Run with Docker Compose:
+                            <pre><code>docker-compose run --rm terminalgenius ask "What is Docker Compose?"</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div id="config" class="tab-content">
+                <div class="card">
+                    <h2><span class="section-icon">⚙️</span> Advanced Configuration</h2>
+
+                    <h3>System-wide Configuration</h3>
+                    <p>The system-wide configuration is stored at <code>/etc/terminalgenius/config.json</code> (for Debian package installation) or in the mounted <code>/app/config/config.json</code> (for Docker).</p>
+
+                    <h3>User Configuration</h3>
+                    <p>For Debian package installations, each user can have their own configuration in <code>~/.terminalgenius/config.json</code> which will override the system defaults.</p>
+
+                    <h3>Environment Variables</h3>
+                    <p>When using Docker, you can configure TerminalGenius with the following environment variables:</p>
+                    <ul>
+                        <li><code>GEMINI_API_KEY</code>: Your Google Gemini API key</li>
+                        <li><code>DEBUG</code>: Set to "1" to enable debug mode</li>
+                        <li><code>THEME</code>: Set the UI theme ("dark", "light", or "auto")</li>
+                    </ul>
+
+                    <div class="note">
+                        <p><strong>Note:</strong> For security, we recommend using environment variables or secure storage for API keys rather than hardcoding them in configuration files.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="troubleshooting" class="tab-content">
+                <div class="card">
+                    <h2><span class="section-icon">🔧</span> Troubleshooting</h2>
+
+                    <h3>Debian Package Issues</h3>
+                    <p>If you encounter permission issues:</p>
+                    <pre><code>sudo chmod 755 /usr/bin/tg
+sudo chown -R $USER:$USER ~/.terminalgenius</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                    <h3>Docker Issues</h3>
+                    <p>If the terminal display doesn't work correctly in Docker:</p>
+                    <pre><code>docker run -it --rm -e TERM=xterm-256color -e GEMINI_API_KEY=your_key terminalgenius ask "Hello"</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                    
+                    <div class="note">
+                        <p><strong>Common Issues:</strong></p>
+                        <ul>
+                            <li>Make sure you have the correct permissions for the mounted volumes</li>
+                            <li>Check that your API key is correctly set</li>
+                            <li>Verify that all dependencies are correctly installed</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>TerminalGenius Documentation • Version 1.0.0</p>
+        </footer>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabContent, tabButtons;
+            
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].className = tabContent[i].className.replace(" active", "");
+            }
+            
+            tabButtons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].className = tabButtons[i].className.replace(" active", "");
+            }
+            
+            document.getElementById(tabName).className += " active";
+            evt.currentTarget.className += " active";
+        }
+
+        function copyToClipboard(button) {
+            const pre = button.parentElement;
+            const code = pre.querySelector('code');
+            const text = code.innerText;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.innerText;
+                button.innerText = "Copied!";
+                button.style.backgroundColor = "#10b981";
+                
+                setTimeout(() => {
+                    button.innerText = originalText;
+                    button.style.backgroundColor = "";
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
