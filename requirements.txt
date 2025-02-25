@@ -1,0 +1,8 @@
+google-generativeai
+click
+requests
+fuzzywuzzy
+python-dotenv
+rich
+prompt_toolkit
+python-Levenshtein
