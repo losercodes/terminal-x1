@@ -1,0 +1,37 @@
+name: Build and Release Debian Package
+
+on:
+  push:
+    tags:
+      - "v*.*.*" # Runs when a version tag (e.g., v1.0.0) is pushed
+
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt update && sudo apt install -y dpkg-dev debhelper
+
+      - name: Create Debian package
+        run: |
+          chmod +x create-deb.sh  # Ensure script is executable
+          ./create-deb.sh  # Run script to build .deb package
+
+      - name: Upload Debian package
+        uses: actions/upload-artifact@v4
+        with:
+          name: terminal-x1-deb
+          path: terminal-x1_*.deb
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: terminal-x1_*.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
